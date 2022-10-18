@@ -1,23 +1,23 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { store } from './app/store';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import './index.css';
+import store from './store'
 
-const container = document.getElementById('root');
-const root = createRoot(container);
+const unsubscribe = store.subscribe( () => {
+    console.log("Store changed!", store.getState());
+}) //subscribe() always returns a function. Invoke the function returned by it lead to unsubscribe the change listener
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+store.dispatch({
+    type: "bugAdded",
+    payload: {
+        description: "Bug1"
+    }
+})
+
+unsubscribe();
+store.dispatch({
+    type: "bugRemoved",
+    payload: {
+        id: 1
+    }
+})
+
+console.log(store.getState());
